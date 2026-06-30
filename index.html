@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#185a35">
+  <title>RH16 4GB Bin Buddy</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #f4f7f1;
+      --panel: #ffffff;
+      --ink: #172117;
+      --muted: #5d6a60;
+      --brand: #185a35;
+      --brand-2: #e7f4ec;
+      --line: #d9e3dc;
+      --warning: #fff7dd;
+      --danger: #fff1ef;
+      --shadow: 0 16px 48px rgba(23, 33, 23, 0.12);
+      --radius: 22px;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #dff1e6, transparent 35%), var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    a { color: var(--brand); }
+
+    .wrap {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 54px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #185a35, #2b7b4f);
+      color: white;
+      border-radius: calc(var(--radius) + 8px);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -90px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 720px;
+      font-size: 1.08rem;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.16);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(23, 33, 23, 0.06);
+      padding: 20px;
+    }
+
+    .card h2, .card h3 {
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .status-card {
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    .big-status {
+      border-radius: 20px;
+      padding: 22px;
+      background: var(--brand-2);
+      border: 1px solid #cfe8d8;
+    }
+
+    .big-status.urgent { background: var(--warning); border-color: #efd987; }
+    .big-status.today { background: var(--danger); border-color: #efb6ad; }
+
+    .eyebrow {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .status-title {
+      font-size: clamp(1.7rem, 5vw, 3.25rem);
+      line-height: 0.96;
+      letter-spacing: -0.06em;
+      margin: 0 0 10px;
+    }
+
+    .status-detail {
+      color: var(--muted);
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .bin-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .bin-tag {
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      background: white;
+      font-weight: 800;
+    }
+
+    .bin-tag small {
+      display: block;
+      font-weight: 650;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button, .button-link {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 15px;
+      font-weight: 800;
+      background: var(--brand);
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      font-size: 0.96rem;
+    }
+
+    button.secondary, .button-link.secondary {
+      background: #eef4ef;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    button.ghost, .button-link.ghost {
+      background: transparent;
+      color: var(--brand);
+      border: 1px solid var(--line);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .bin-form-row {
+      display: grid;
+      grid-template-columns: auto 1fr minmax(150px, 190px);
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fbfdfb;
+    }
+
+    .bin-form-row .label-main {
+      font-weight: 850;
+    }
+
+    .bin-form-row .label-sub {
+      display: block;
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 2px;
+    }
+
+    label.checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 750;
+    }
+
+    input[type="date"], input[type="time"], input[type="text"], select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font: inherit;
+      background: white;
+      color: var(--ink);
+      min-height: 44px;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--brand);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .mini-field label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .collections {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .collection-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fbfdfb;
+    }
+
+    .date-badge {
+      width: 62px;
+      border-radius: 14px;
+      background: var(--brand-2);
+      color: var(--brand);
+      font-weight: 900;
+      text-align: center;
+      padding: 9px 4px;
+      line-height: 1.05;
+    }
+
+    .date-badge span {
+      display: block;
+      font-size: 1.55rem;
+      letter-spacing: -0.04em;
+    }
+
+    .collection-title {
+      font-weight: 900;
+      margin: 0 0 4px;
+    }
+
+    .collection-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .notice {
+      border-radius: 18px;
+      padding: 14px;
+      background: var(--warning);
+      border: 1px solid #efd987;
+      color: #4e421a;
+      margin-top: 12px;
+    }
+
+    .notice p { margin: 0; }
+
+    .share-panel {
+      display: grid;
+      gap: 12px;
+    }
+
+    .share-link-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .share-link-row input {
+      font-size: 0.86rem;
+    }
+
+    @media (max-width: 560px) {
+      .share-link-row { grid-template-columns: 1fr; }
+    }
+
+    .link-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .link-list a {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      text-decoration: none;
+      background: #fbfdfb;
+      font-weight: 800;
+    }
+
+    .muted { color: var(--muted); }
+
+    .small { font-size: 0.92rem; }
+
+    .hidden { display: none !important; }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--ink);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      transition: transform 180ms ease;
+      z-index: 10;
+      font-weight: 750;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .bin-form-row { grid-template-columns: auto 1fr; }
+      .bin-form-row input[type="date"] { grid-column: 1 / -1; }
+      .mini-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .controls, .link-list, button, .button-link { display: none !important; }
+      body { background: white; }
+      .card, .hero { box-shadow: none; }
+      .hero { color: var(--ink); background: white; border: 1px solid var(--line); }
+      .hero p, .pill { color: var(--ink); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <section class="hero">
+        <h1>RH16 4GB Bin Buddy</h1>
+        <p>A small local applet for RH16 4GB. Add the first collection dates from the official Mid Sussex checker once, then this page works out what goes out each week and can export reminders to your calendar.</p>
+        <div class="pill-row" aria-label="Key details">
+          <span class="pill">Postcode: RH16 4GB</span>
+          <span class="pill">Council: Mid Sussex</span>
+          <span class="pill">Food weekly</span>
+          <span class="pill">Recycling every 2 weeks</span>
+          <span class="pill">Rubbish every 3 weeks</span>
+        </div>
+      </section>
+    </header>
+
+    <main class="grid">
+      <section class="card status-card" aria-labelledby="today-heading">
+        <div>
+          <h2 id="today-heading">What to put out</h2>
+          <div id="statusBox" class="big-status">
+            <span class="eyebrow">Setup needed</span>
+            <h3 class="status-title">Add your first dates</h3>
+            <p class="status-detail">Open the official checker, select your address, then enter the next dates below.</p>
+          </div>
+        </div>
+        <div class="controls">
+          <a class="button-link" href="https://www.midsussex.gov.uk/waste-recycling/bin-collection/?postcode=rh16+4gb" target="_blank" rel="noopener">Open official checker</a>
+          <button type="button" class="secondary" id="exportIcs" disabled>Export calendar</button>
+          <button type="button" class="secondary" id="shareSchedule" disabled>Share household link</button>
+          <button type="button" class="ghost" id="copyTonight" disabled>Copy reminder</button>
+        </div>
+      </section>
+
+      <aside class="card" aria-labelledby="setup-heading">
+        <h2 id="setup-heading">Set your schedule</h2>
+        <p class="muted small">Use the first upcoming collection date shown for your exact address. The app stores this only in your browser.</p>
+
+        <form id="settingsForm" class="form-grid">
+          <div class="bin-form-row" data-bin-row="food">
+            <label class="checkbox"><input type="checkbox" id="enabled_food" checked> <span class="label-main">Food waste<span class="label-sub">Green outdoor food bin, weekly</span></span></label>
+            <div></div>
+            <input type="date" id="date_food" aria-label="Next food waste collection date">
+          </div>
+
+          <div class="bin-form-row" data-bin-row="recycling">
+            <label class="checkbox"><input type="checkbox" id="enabled_recycling" checked> <span class="label-main">Recycling<span class="label-sub">Blue-lidded bin, every 2 weeks</span></span></label>
+            <div></div>
+            <input type="date" id="date_recycling" aria-label="Next recycling collection date">
+          </div>
+
+          <div class="bin-form-row" data-bin-row="rubbish">
+            <label class="checkbox"><input type="checkbox" id="enabled_rubbish" checked> <span class="label-main">Rubbish<span class="label-sub">Black-lidded bin, every 3 weeks</span></span></label>
+            <div></div>
+            <input type="date" id="date_rubbish" aria-label="Next rubbish collection date">
+          </div>
+
+          <div class="bin-form-row" data-bin-row="garden">
+            <label class="checkbox"><input type="checkbox" id="enabled_garden"> <span class="label-main">Garden waste<span class="label-sub">Optional paid service, usually every 2 weeks</span></span></label>
+            <div></div>
+            <input type="date" id="date_garden" aria-label="Next garden waste collection date" disabled>
+          </div>
+
+          <div class="mini-grid">
+            <div class="mini-field">
+              <label for="putOutTime">Put bins out by</label>
+              <input type="time" id="putOutTime" value="07:00">
+            </div>
+            <div class="mini-field">
+              <label for="reminderTime">Calendar reminder time</label>
+              <input type="time" id="reminderTime" value="18:00">
+            </div>
+          </div>
+
+          <div class="controls">
+            <button type="submit">Save schedule</button>
+            <button type="button" class="secondary" id="printSchedule">Print</button>
+            <button type="button" class="ghost" id="clearSchedule">Clear</button>
+          </div>
+        </form>
+
+        <div id="sharePanel" class="notice share-panel hidden">
+          <p><strong>Household link ready:</strong> this link includes the collection dates and reminder times, but not your exact address. Send it to another household member and their app will open already filled in.</p>
+          <div class="share-link-row">
+            <input type="text" id="shareLinkOutput" readonly aria-label="Shareable household schedule link">
+            <button type="button" class="secondary" id="copyShareLink">Copy link</button>
+          </div>
+        </div>
+
+        <div class="notice">
+          <p><strong>Christmas/New Year:</strong> this app follows the normal repeating pattern. Check the official checker around Christmas and New Year, when Mid Sussex may publish temporary changes.</p>
+        </div>
+      </aside>
+
+      <section class="card" aria-labelledby="upcoming-heading">
+        <h2 id="upcoming-heading">Next collections</h2>
+        <ul id="collectionList" class="collections">
+          <li class="collection-item">
+            <div class="date-badge">--<span>--</span></div>
+            <div>
+              <p class="collection-title">No schedule saved yet</p>
+              <p class="collection-meta">Enter your first dates to see the next few weeks.</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <aside class="card" aria-labelledby="official-heading">
+        <h2 id="official-heading">Official checks</h2>
+        <p class="muted small">RH16 4GB includes Fletcher Way addresses. Collection days can vary by exact property, so use the council lookup for the first dates.</p>
+        <div class="link-list">
+          <a href="https://waste.services.midsussex.gov.uk/" target="_blank" rel="noopener">Mid Sussex bins and waste service area</a>
+          <a href="https://www.midsussex.gov.uk/waste-recycling/bin-collection/" target="_blank" rel="noopener">Mid Sussex bin collection guidance</a>
+          <a href="https://binmap.uk/bin-collection-dates/haywards-heath/" target="_blank" rel="noopener">Binmap Haywards Heath lookup and calendar export</a>
+          <a href="https://www.gov.uk/rubbish-collection-day/mid-sussex" target="_blank" rel="noopener">GOV.UK Mid Sussex match</a>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      Private, offline-friendly helper. It does not send your address anywhere. Shared links contain the dates you choose to share.
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const BIN_DEFS = [
+      { id: "food", name: "Food waste", short: "Food", container: "Green food bin", intervalWeeks: 1 },
+      { id: "recycling", name: "Recycling", short: "Recycling", container: "Blue-lidded bin", intervalWeeks: 2 },
+      { id: "rubbish", name: "Rubbish", short: "Rubbish", container: "Black-lidded bin", intervalWeeks: 3 },
+      { id: "garden", name: "Garden waste", short: "Garden", container: "Green garden bin", intervalWeeks: 2 }
+    ];
+
+    const STORAGE_KEY = "rh16-4gb-bin-buddy-settings-v1";
+    const DATE_FMT = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" });
+    const SHORT_MONTH = new Intl.DateTimeFormat("en-GB", { month: "short" });
+
+    const form = document.getElementById("settingsForm");
+    const statusBox = document.getElementById("statusBox");
+    const collectionList = document.getElementById("collectionList");
+    const exportBtn = document.getElementById("exportIcs");
+    const shareBtn = document.getElementById("shareSchedule");
+    const copyBtn = document.getElementById("copyTonight");
+    const printBtn = document.getElementById("printSchedule");
+    const clearBtn = document.getElementById("clearSchedule");
+    const sharePanel = document.getElementById("sharePanel");
+    const shareLinkOutput = document.getElementById("shareLinkOutput");
+    const copyShareLinkBtn = document.getElementById("copyShareLink");
+    const toast = document.getElementById("toast");
+
+    function defaultSettings() {
+      return {
+        putOutTime: "07:00",
+        reminderTime: "18:00",
+        bins: {
+          food: { enabled: true, startDate: "" },
+          recycling: { enabled: true, startDate: "" },
+          rubbish: { enabled: true, startDate: "" },
+          garden: { enabled: false, startDate: "" }
+        }
+      };
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultSettings();
+        const stored = JSON.parse(raw);
+        return mergeSettings(defaultSettings(), stored);
+      } catch (err) {
+        console.warn("Could not load saved settings", err);
+        return defaultSettings();
+      }
+    }
+
+    function mergeSettings(base, stored) {
+      const merged = JSON.parse(JSON.stringify(base));
+      if (stored.putOutTime) merged.putOutTime = stored.putOutTime;
+      if (stored.reminderTime) merged.reminderTime = stored.reminderTime;
+      if (stored.bins) {
+        for (const def of BIN_DEFS) {
+          merged.bins[def.id] = { ...merged.bins[def.id], ...(stored.bins[def.id] || {}) };
+        }
+      }
+      return merged;
+    }
+
+    function saveSettings(settings) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+
+    function isValidDateString(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      return toDateKey(parseDate(value)) === value;
+    }
+
+    function isValidTimeString(value) {
+      return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+    }
+
+    function compactSettings(settings) {
+      const compact = {
+        v: 1,
+        p: settings.putOutTime,
+        r: settings.reminderTime,
+        b: {}
+      };
+      for (const def of BIN_DEFS) {
+        const bin = settings.bins[def.id] || {};
+        compact.b[def.id] = {
+          e: !!bin.enabled,
+          d: bin.startDate || ""
+        };
+      }
+      return compact;
+    }
+
+    function expandSharedSettings(payload) {
+      const settings = defaultSettings();
+      if (payload && isValidTimeString(payload.p || "")) settings.putOutTime = payload.p;
+      if (payload && isValidTimeString(payload.r || "")) settings.reminderTime = payload.r;
+      if (payload && payload.b && typeof payload.b === "object") {
+        for (const def of BIN_DEFS) {
+          const shared = payload.b[def.id];
+          if (!shared || typeof shared !== "object") continue;
+          settings.bins[def.id].enabled = !!shared.e;
+          settings.bins[def.id].startDate = isValidDateString(shared.d || "") ? shared.d : "";
+        }
+      }
+      return settings;
+    }
+
+    function encodeShareSettings(settings) {
+      const json = JSON.stringify(compactSettings(settings));
+      return btoa(json).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function decodeShareSettings(encoded) {
+      const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
+      const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
+      return expandSharedSettings(JSON.parse(atob(padded)));
+    }
+
+    function sharedSettingsFromUrl() {
+      if (!window.location.hash) return null;
+      const hash = window.location.hash.slice(1);
+      const params = new URLSearchParams(hash);
+      const encoded = params.get("schedule") || params.get("s");
+      if (!encoded) return null;
+      try {
+        return decodeShareSettings(encoded);
+      } catch (err) {
+        console.warn("Could not read shared schedule", err);
+        return null;
+      }
+    }
+
+    function makeShareUrl(settings) {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = `schedule=${encodeShareSettings(settings)}`;
+      return url.toString();
+    }
+
+    function showShareLink(settings) {
+      const link = makeShareUrl(settings);
+      shareLinkOutput.value = link;
+      sharePanel.classList.remove("hidden");
+      return link;
+    }
+
+    async function copyOrPrompt(text, successMessage, promptMessage) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(successMessage);
+      } catch (err) {
+        window.prompt(promptMessage, text);
+      }
+    }
+
+    function populateForm(settings) {
+      document.getElementById("putOutTime").value = settings.putOutTime;
+      document.getElementById("reminderTime").value = settings.reminderTime;
+      for (const def of BIN_DEFS) {
+        const enabled = document.getElementById(`enabled_${def.id}`);
+        const date = document.getElementById(`date_${def.id}`);
+        enabled.checked = settings.bins[def.id].enabled;
+        date.value = settings.bins[def.id].startDate;
+        date.disabled = !enabled.checked;
+      }
+    }
+
+    function readForm() {
+      const settings = defaultSettings();
+      settings.putOutTime = document.getElementById("putOutTime").value || "07:00";
+      settings.reminderTime = document.getElementById("reminderTime").value || "18:00";
+      for (const def of BIN_DEFS) {
+        settings.bins[def.id] = {
+          enabled: document.getElementById(`enabled_${def.id}`).checked,
+          startDate: document.getElementById(`date_${def.id}`).value
+        };
+      }
+      return settings;
+    }
+
+    function validate(settings) {
+      const missing = [];
+      for (const def of BIN_DEFS) {
+        const bin = settings.bins[def.id];
+        if (bin.enabled && !bin.startDate) missing.push(def.name);
+      }
+      return missing;
+    }
+
+    function parseDate(value) {
+      const [y, m, d] = value.split("-").map(Number);
+      return new Date(y, m - 1, d, 12, 0, 0, 0);
+    }
+
+    function toDateKey(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function addDays(date, days) {
+      const next = new Date(date);
+      next.setDate(next.getDate() + days);
+      return next;
+    }
+
+    function startOfToday() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+    }
+
+    function formatDate(date) {
+      return DATE_FMT.format(date);
+    }
+
+    function groupCollections(settings, horizonDays = 120) {
+      const today = startOfToday();
+      const end = addDays(today, horizonDays);
+      const groups = new Map();
+
+      for (const def of BIN_DEFS) {
+        const bin = settings.bins[def.id];
+        if (!bin.enabled || !bin.startDate) continue;
+        let cursor = parseDate(bin.startDate);
+        const stepDays = def.intervalWeeks * 7;
+
+        while (cursor < today) cursor = addDays(cursor, stepDays);
+        while (cursor <= end) {
+          const key = toDateKey(cursor);
+          if (!groups.has(key)) groups.set(key, { date: new Date(cursor), bins: [] });
+          groups.get(key).bins.push(def);
+          cursor = addDays(cursor, stepDays);
+        }
+      }
+
+      return [...groups.values()].sort((a, b) => a.date - b.date);
+    }
+
+    function describeBins(bins) {
+      return bins.map(b => b.short).join(" + ");
+    }
+
+    function render(settings) {
+      const missing = validate(settings);
+      const configured = missing.length === 0 && BIN_DEFS.some(def => settings.bins[def.id].enabled);
+      exportBtn.disabled = !configured;
+      shareBtn.disabled = !configured;
+      copyBtn.disabled = !configured;
+      if (!configured) sharePanel.classList.add("hidden");
+
+      if (!configured) {
+        statusBox.className = "big-status";
+        statusBox.innerHTML = `
+          <span class="eyebrow">Setup needed</span>
+          <h3 class="status-title">Add your first dates</h3>
+          <p class="status-detail">Missing: ${missing.length ? missing.join(", ") : "at least one enabled bin"}.</p>
+        `;
+        collectionList.innerHTML = `
+          <li class="collection-item">
+            <div class="date-badge">--<span>--</span></div>
+            <div>
+              <p class="collection-title">No complete schedule saved yet</p>
+              <p class="collection-meta">Use the official checker, then save the next date for each enabled bin.</p>
+            </div>
+          </li>
+        `;
+        return;
+      }
+
+      const groups = groupCollections(settings, 160);
+      const today = startOfToday();
+      const tomorrowKey = toDateKey(addDays(today, 1));
+      const todayKey = toDateKey(today);
+      const todayGroup = groups.find(g => toDateKey(g.date) === todayKey);
+      const tomorrowGroup = groups.find(g => toDateKey(g.date) === tomorrowKey);
+      const nextGroup = groups[0];
+
+      if (todayGroup) {
+        statusBox.className = "big-status today";
+        statusBox.innerHTML = statusMarkup("Collection today", describeBins(todayGroup.bins), `Put these out by ${settings.putOutTime}.`);
+      } else if (tomorrowGroup) {
+        statusBox.className = "big-status urgent";
+        statusBox.innerHTML = statusMarkup("Put out tonight", describeBins(tomorrowGroup.bins), `Collection is tomorrow. Put bins out by ${settings.putOutTime}.`);
+      } else if (nextGroup) {
+        statusBox.className = "big-status";
+        statusBox.innerHTML = statusMarkup("Next collection", describeBins(nextGroup.bins), `${formatDate(nextGroup.date)}. Put bins out by ${settings.putOutTime}.`);
+      }
+
+      collectionList.innerHTML = groups.slice(0, 10).map(group => collectionItemMarkup(group, settings)).join("");
+    }
+
+    function statusMarkup(label, title, detail) {
+      return `
+        <span class="eyebrow">${label}</span>
+        <h3 class="status-title">${title}</h3>
+        <p class="status-detail">${detail}</p>
+        <div class="bin-tags">${title.split(" + ").map(t => `<span class="bin-tag">${t}<small>Bin day helper</small></span>`).join("")}</div>
+      `;
+    }
+
+    function collectionItemMarkup(group, settings) {
+      const day = String(group.date.getDate()).padStart(2, "0");
+      const month = SHORT_MONTH.format(group.date);
+      const bins = group.bins.map(b => `${b.name} (${b.container})`).join(", ");
+      const diff = Math.round((group.date - startOfToday()) / 86400000);
+      let when = `${formatDate(group.date)}`;
+      if (diff === 0) when = "Today";
+      if (diff === 1) when = "Tomorrow";
+      return `
+        <li class="collection-item">
+          <div class="date-badge">${month}<span>${day}</span></div>
+          <div>
+            <p class="collection-title">${describeBins(group.bins)}</p>
+            <p class="collection-meta">${when}. ${bins}. Put out by ${settings.putOutTime}.</p>
+          </div>
+        </li>
+      `;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function makeReminderText(settings) {
+      const groups = groupCollections(settings, 40);
+      const today = startOfToday();
+      const tomorrowKey = toDateKey(addDays(today, 1));
+      const todayKey = toDateKey(today);
+      const todayGroup = groups.find(g => toDateKey(g.date) === todayKey);
+      const tomorrowGroup = groups.find(g => toDateKey(g.date) === tomorrowKey);
+      const nextGroup = todayGroup || tomorrowGroup || groups[0];
+      if (!nextGroup) return "No bin collections configured.";
+      const prefix = todayGroup ? "Today" : tomorrowGroup ? "Tonight" : `Next: ${formatDate(nextGroup.date)}`;
+      return `${prefix} - put out ${describeBins(nextGroup.bins)}. Collection date: ${formatDate(nextGroup.date)}. Put out by ${settings.putOutTime}.`;
+    }
+
+    function exportCalendar(settings) {
+      const groups = groupCollections(settings, 540);
+      const lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//RH16 4GB Bin Buddy//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:RH16 4GB Bin Buddy"
+      ];
+
+      for (const group of groups) {
+        const reminderDate = addDays(group.date, -1);
+        const [hour, minute] = settings.reminderTime.split(":").map(Number);
+        reminderDate.setHours(hour, minute, 0, 0);
+        const endDate = new Date(reminderDate);
+        endDate.setMinutes(endDate.getMinutes() + 30);
+        const uid = `${toDateKey(group.date)}-${group.bins.map(b => b.id).join("-")}@rh16-4gb-bin-buddy`;
+        const summary = `Put out: ${describeBins(group.bins)}`;
+        const description = `Collection tomorrow (${formatDate(group.date)}). Put bins out by ${settings.putOutTime}. Check Mid Sussex for Christmas and New Year changes.`;
+        lines.push(
+          "BEGIN:VEVENT",
+          `UID:${uid}`,
+          `DTSTAMP:${formatUTC(new Date())}`,
+          `DTSTART:${formatLocalDateTime(reminderDate)}`,
+          `DTEND:${formatLocalDateTime(endDate)}`,
+          `SUMMARY:${escapeIcs(summary)}`,
+          `DESCRIPTION:${escapeIcs(description)}`,
+          "BEGIN:VALARM",
+          "TRIGGER:-PT1H",
+          "ACTION:DISPLAY",
+          `DESCRIPTION:${escapeIcs(summary)}`,
+          "END:VALARM",
+          "END:VEVENT"
+        );
+      }
+
+      lines.push("END:VCALENDAR");
+      downloadText("rh16-4gb-bin-buddy-reminders.ics", foldIcs(lines).join("\r\n"));
+    }
+
+    function pad2(num) { return String(num).padStart(2, "0"); }
+
+    function formatLocalDateTime(date) {
+      return `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}T${pad2(date.getHours())}${pad2(date.getMinutes())}${pad2(date.getSeconds())}`;
+    }
+
+    function formatUTC(date) {
+      return `${date.getUTCFullYear()}${pad2(date.getUTCMonth() + 1)}${pad2(date.getUTCDate())}T${pad2(date.getUTCHours())}${pad2(date.getUTCMinutes())}${pad2(date.getUTCSeconds())}Z`;
+    }
+
+    function escapeIcs(text) {
+      return String(text)
+        .replace(/\\/g, "\\\\")
+        .replace(/\n/g, "\\n")
+        .replace(/,/g, "\\,")
+        .replace(/;/g, "\\;");
+    }
+
+    function foldIcs(lines) {
+      const folded = [];
+      for (const line of lines) {
+        if (line.length <= 72) {
+          folded.push(line);
+          continue;
+        }
+        let current = line;
+        folded.push(current.slice(0, 72));
+        current = current.slice(72);
+        while (current.length > 71) {
+          folded.push(" " + current.slice(0, 71));
+          current = current.slice(71);
+        }
+        if (current.length) folded.push(" " + current);
+      }
+      return folded;
+    }
+
+    function downloadText(filename, text) {
+      const blob = new Blob([text], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function bindEvents() {
+      for (const def of BIN_DEFS) {
+        const enabled = document.getElementById(`enabled_${def.id}`);
+        const date = document.getElementById(`date_${def.id}`);
+        enabled.addEventListener("change", () => {
+          date.disabled = !enabled.checked;
+          if (!enabled.checked) date.value = "";
+        });
+      }
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const settings = readForm();
+        const missing = validate(settings);
+        if (missing.length) {
+          showToast(`Add dates for: ${missing.join(", ")}`);
+          render(settings);
+          return;
+        }
+        saveSettings(settings);
+        render(settings);
+        showToast("Schedule saved");
+      });
+
+      clearBtn.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        const settings = defaultSettings();
+        populateForm(settings);
+        render(settings);
+        showToast("Schedule cleared");
+      });
+
+      printBtn.addEventListener("click", () => window.print());
+
+      exportBtn.addEventListener("click", () => {
+        const settings = readForm();
+        const missing = validate(settings);
+        if (missing.length) {
+          showToast(`Add dates for: ${missing.join(", ")}`);
+          return;
+        }
+        saveSettings(settings);
+        exportCalendar(settings);
+        showToast("Calendar file created");
+      });
+
+      shareBtn.addEventListener("click", async () => {
+        const settings = readForm();
+        const missing = validate(settings);
+        if (missing.length) {
+          showToast(`Add dates for: ${missing.join(", ")}`);
+          return;
+        }
+        saveSettings(settings);
+        render(settings);
+        const link = showShareLink(settings);
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: "RH16 4GB Bin Buddy schedule",
+              text: "Here is our household bin schedule.",
+              url: link
+            });
+            showToast("Share link sent");
+            return;
+          } catch (err) {
+            if (err && err.name === "AbortError") {
+              showToast("Share link ready");
+              return;
+            }
+          }
+        }
+        await copyOrPrompt(link, "Household link copied", "Copy this household link:");
+      });
+
+      copyShareLinkBtn.addEventListener("click", async () => {
+        const link = shareLinkOutput.value || showShareLink(readForm());
+        await copyOrPrompt(link, "Household link copied", "Copy this household link:");
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        const settings = readForm();
+        const text = makeReminderText(settings);
+        await copyOrPrompt(text, "Reminder copied", "Copy this reminder:");
+      });
+    }
+
+    async function registerServiceWorker() {
+      if (location.protocol === "file:" || !("serviceWorker" in navigator)) return;
+      try {
+        await navigator.serviceWorker.register("service-worker.js");
+      } catch (err) {
+        console.info("Service worker not registered", err);
+      }
+    }
+
+    bindEvents();
+    const sharedSettings = sharedSettingsFromUrl();
+    const settings = sharedSettings || loadSettings();
+    if (sharedSettings) {
+      saveSettings(settings);
+      if (history.replaceState) history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+    populateForm(settings);
+    render(settings);
+    if (sharedSettings) showToast("Shared schedule loaded");
+    registerServiceWorker();
+  </script>
+</body>
+</html>

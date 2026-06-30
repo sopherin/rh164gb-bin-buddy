@@ -1,0 +1,17 @@
+{
+  "name": "RH16 4GB Bin Buddy",
+  "short_name": "Bin Buddy",
+  "description": "Offline-friendly bin reminder applet for RH16 4GB and Mid Sussex 1,2,3 collections.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f1",
+  "theme_color": "#185a35",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="RH16 4GB Bin Buddy icon">
+  <rect width="512" height="512" rx="112" fill="#185a35"/>
+  <rect x="138" y="176" width="236" height="220" rx="28" fill="#e7f4ec"/>
+  <rect x="120" y="136" width="272" height="52" rx="24" fill="#ffffff"/>
+  <rect x="188" y="108" width="136" height="40" rx="18" fill="#ffffff"/>
+  <path d="M202 232h108M202 282h108M202 332h80" stroke="#185a35" stroke-width="28" stroke-linecap="round"/>
+</svg>
